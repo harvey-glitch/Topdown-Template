@@ -41,17 +41,17 @@ This project is a **3D Top-Down Shooter Template**, designed to provide a founda
 - **ObjectPool**: Oversees pooling and reuse of objects.
 
 ### Adding New Content
-- **Weapons**
-- Create a script that inherits from the abstract *Weapon* class and override the Fire method to define how it shoots.
-- Right-click in the Project window, choose *Create* -> *ScriptableObject* -> *WeaponData*, and fill in the details like damage and fire rate.
-- Attach your new weapon script to the weapon GameObject and assign the *WeaponData* ScriptableObject to it.
+**Weapons**
+1. Create a script that inherits from the abstract *Weapon* class and override the Fire method to define how it shoots.
+2. Right-click in the Project window, choose *Create* -> *ScriptableObject* -> *WeaponData*, and fill in the details like damage and fire rate.
+3. Attach your new weapon script to the weapon GameObject and assign the *WeaponData* ScriptableObject to it.
 
-- **Enemies**
-- Create an enemy prefab and drag it into the scene
+**Enemies**
+1. Create an enemy prefab and drag it into the scene
 
-- **Destructibles**
-- Create a new script that inherits from *HealthManager* and override *OnHealthDepleted* to define what happens when health runs out.
-- Attach the script on the GameObject you want to make destructible.
+**Destructibles**
+1. Create a new script that inherits from *HealthManager* and override *OnHealthDepleted* to define what happens when health runs out.
+2. Attach the script on the GameObject you want to make destructible.
 
 ## Demo Scene
 The demo scene includes:
