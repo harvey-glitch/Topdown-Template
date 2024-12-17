@@ -8,8 +8,6 @@ public class EnemyAI : MonoBehaviour
 {
     // Flag to indicate if the AI is provoked or not
     [HideInInspector] public bool isProvoked;
-    // Reference to the transform component of the target / player
-    [SerializeField] Transform target;
     // The distance at which the AI can detect the target.
     [SerializeField] float detectionRange= 5.0f;
     // The distance within which the AI will start attacking the target.
@@ -21,6 +19,8 @@ public class EnemyAI : MonoBehaviour
     NavMeshAgent m_agent;
     // Reference to the Animator component
     Animator m_animator;
+    // Reference to the transform component of the target / player
+    Transform m_target;
     // Flag to indicate whether the AI is currently in the middle of an attack.
     bool m_isAttacking;
     // Stores the last known position of the target
@@ -36,23 +36,22 @@ public class EnemyAI : MonoBehaviour
         attack
     }
 
-    // The current state of the AI
-    [SerializeField] States currentState;
+    // The current state of the AI; setting it to idle by default
+    [SerializeField] States currentState = States.idle;
 
     void Awake()
     {
         // Catch required components
         m_agent = GetComponent<NavMeshAgent>();
         m_animator = GetComponent<Animator>();
+
+        // Catch the target transform reference
+        m_target = FindObjectOfType<PlayerController>().transform;
     }
 
     void Start()
     {
-        // Set the state to idle and disable the AI's movement
-        ChangeState(States.idle, true);
-
-        // Disable the ai rotation (to be controlled via script)
-        m_agent.updateRotation = false;
+        InitializedState();
     }
 
     void Update()
@@ -99,7 +98,7 @@ public class EnemyAI : MonoBehaviour
         if (Time.time >= m_nextUpdateTime)
         {
             // Check if the player has moved significantly since the last update
-            if (Vector3.Distance(m_targetLastPosition, target.position) > 1.0f)
+            if (Vector3.Distance(m_targetLastPosition, m_target.position) > 1.0f)
             {
                 UpdateDestination();
             }
@@ -145,10 +144,20 @@ public class EnemyAI : MonoBehaviour
     void UpdateDestination()
     {
         // Update the player's last known position
-        m_targetLastPosition = target.position;
+        m_targetLastPosition = m_target.position;
 
         // Update the enemy destination
-        m_agent.SetDestination(target.position);
+        m_agent.SetDestination(m_target.position);
+    }
+
+    void InitializedState()
+    {
+        // Disable the ai rotation (to be controlled via script)
+        m_agent.updateRotation = false;
+
+        // Call the provoked method upon spawning
+        if (isProvoked)
+            OnProvoked();
     }
 
     void ChangeState(States newState, bool stopMovement)
@@ -194,13 +203,13 @@ public class EnemyAI : MonoBehaviour
     float GetTargetDistance()
     {
         // return the distance between the AI and target
-        return Vector3.Distance(transform.position, target.position);
+        return Vector3.Distance(transform.position, m_target.position);
     }
 
     Vector3 GetTargetDirection()
     {
         // return the direction from the AI to the target
-        return (target.position - transform.position).normalized;
+        return (m_target.position - transform.position).normalized;
     }
 
     bool IsTargetObstructed()

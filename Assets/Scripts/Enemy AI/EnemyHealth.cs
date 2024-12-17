@@ -25,6 +25,13 @@ public class EnemyHealth : HealthManager
 
     protected override void OnHealthDepleted()
     {
+        // Get the death particle from the pool
+        GameObject deathParticle = ObjectPool.instance.GetObject("Death");
+
+        // Set the particle's position and rotation
+        deathParticle.transform.position = transform.position;
+        deathParticle.transform.rotation = Quaternion.identity;
+
         // Disable the gameobject
         gameObject.SetActive(false);
     }
